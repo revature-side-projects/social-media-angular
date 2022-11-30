@@ -7,35 +7,45 @@ import { PostService } from 'src/app/services/post.service';
 @Component({
   selector: 'app-comment',
   templateUrl: './comment.component.html',
-  styleUrls: ['./comment.component.css']
+  styleUrls: ['./comment.component.css'],
 })
 export class CommentComponent implements OnInit {
-
   commentForm = new FormGroup({
     text: new FormControl(''),
-  })
+  });
 
   @Input('comment') inputComment: Post;
-  replyToComment: boolean = false
+  replyToComment: boolean = false;
 
-  constructor(private postService: PostService, private authService: AuthService) { }
+  constructor(
+    private postService: PostService,
+    private authService: AuthService
+  ) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   toggleReplyToComment = () => {
-    this.replyToComment = !this.replyToComment
-  }
+    this.replyToComment = !this.replyToComment;
+  };
 
   submitReply = (e: any) => {
-    e.preventDefault()
-    let newComment = new Post(0, this.commentForm.value.text || "", "", this.authService.currentUser, [])
-    this.postService.upsertPost({...this.inputComment, comments: [...this.inputComment.comments, newComment]})
-      .subscribe(
-        (response) => {
-          this.inputComment = response
-          this.toggleReplyToComment()
-        }
-      )
-  }
+    e.preventDefault();
+    let newComment = new Post(
+      0,
+      this.commentForm.value.text || '',
+      '',
+      this.authService.currentUser,
+      [],
+      'Reply'
+    );
+    this.postService
+      .upsertPost({
+        ...this.inputComment,
+        comments: [...this.inputComment.comments, newComment],
+      })
+      .subscribe((response) => {
+        this.inputComment = response;
+        this.toggleReplyToComment();
+      });
+  };
 }
